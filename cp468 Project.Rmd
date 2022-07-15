@@ -1,0 +1,61 @@
+---
+title: "Cp468 Project"
+author: "Lily Dinh, Stephen Morris"
+output: html_document
+date: '2022-07-11'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#Required libraries to run the following chunks
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+library(scales)
+library(GGally)
+```
+
+```{r}
+#Read in dataset, drop unnecessary columns and remove any "Unknown" values, change data to numeric values
+anime <- read.csv("anime.csv")
+anime <- anime %>% 
+  subset(.,select = c(3,17:19))%>%
+  subset(., !(Ranked == "Unknown" | Score == "Unknown"))%>%
+  transform(.,Score = as.numeric(Score), Ranked = as.numeric(Ranked))
+anime
+```
+
+```{r}
+#Individual boxplots of 4 columns
+boxplot(anime["Score"])
+title("Score")
+boxplot(anime["Ranked"])
+title("Ranked")
+boxplot(anime["Popularity"])
+title("Popularity")
+boxplot(anime["Members"])
+title("Members")
+```
+```{r}
+#Scale the Popularity and Members to 0-10
+temp <-lapply(anime[c(3,4)],function(x)
+  
+  scale(x,center = FALSE, scale = max(x,na.rm= TRUE)/10)
+  )
+df<-cbind(anime[c(1,2)],temp)
+
+#Create Scatterplot of Ranked (x-value) with other 3 columns (y-value)
+df_melt <- melt(df, "Ranked")
+ggplot(df_melt, aes(Ranked,value))+
+  geom_point()+
+  facet_grid(.~variable)
+
+```
+```{r}
+#Pairs plot with correlations
+ggpairs(df)
+```
+
