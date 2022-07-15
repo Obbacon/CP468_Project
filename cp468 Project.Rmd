@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #Required libraries to run the following chunks
 library(dplyr)
 library(reshape2)
+library(ggplot2)
 library(scales)
 library(GGally)
 ```
@@ -20,9 +21,10 @@ library(GGally)
 ```{r}
 #Read in dataset, drop unnecessary columns and remove any "Unknown" values, change data to numeric values
 anime <- read.csv("anime.csv")
-anime <- anime[c(3,17:19)]
-anime <- anime[!(anime$Ranked == "Unknown" | anime$Score == "Unknown"),]
-anime <- transform(anime,Score = as.numeric(Score), Ranked = as.numeric(Ranked))
+anime <- anime %>% 
+  subset(.,select = c(3,17:19))%>%
+  subset(., !(Ranked == "Unknown" | Score == "Unknown"))%>%
+  transform(.,Score = as.numeric(Score), Ranked = as.numeric(Ranked))
 anime
 ```
 
