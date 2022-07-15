@@ -2,6 +2,8 @@
 
 #Imports
 import os
+from turtle import color
+from matplotlib import mlab
 import nltk
 from nltk.corpus import stopwords
 #nltk.download('stopwords')
@@ -14,6 +16,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as matp
+import matplotlib as mpl
 import re
 import numpy as np  
 
@@ -25,7 +28,7 @@ import numpy as np
 
 #Get the path
 """
-for getDirectory, _, files in os.walk('\CP468_Project\anime.csv'):
+for getDirectory, _, files in os.walk('\CP468_Project\animes.csv'):
     for file in files:
         print(os.path.join(getDirectory, file))
 """
@@ -33,9 +36,12 @@ for getDirectory, _, files in os.walk('\CP468_Project\anime.csv'):
 #Linear regression model
 def linearFunc():
     amountOfRows = 2500
-    data = pd.read_csv('anime.csv', delimiter=',', nrows = amountOfRows)
-    x_axis = data['Ranked'].values
-    y_axis = data['Score'].values
+    data = pd.read_csv('animes.csv', delimiter=',', nrows = amountOfRows)
+    data.dropna(inplace=True)
+
+    x_axis = data['ranked'].values
+    y_axis = data['score'].values
+    
     print(f'Rank: {x_axis}')
     print(f'Score: {y_axis}')
 
@@ -44,16 +50,31 @@ def linearFunc():
     print(x_axis)
     print(y_axis)
 
-    train_x_axis, test_x_axis, train_y_axis, test_y_axis = train_test_split(x_axis, y_axis, train_size=.10, test_size=.2, random_state=90)
-    print("Train the data on x_axis {0}".format(train_x_axis.shape))
+    train_x_axis, test_x_axis, train_y_axis, test_y_axis = train_test_split(x_axis, y_axis, train_size=.7, test_size=.2, random_state=100)
+    print(f'Train the data on x_axis {train_x_axis.shape}')
     print("Train the data on y_axis {0}".format(train_y_axis.shape))
     print("Testing the data on x_axis {0}".format(test_x_axis.shape))
     print("Testing the data on y_axis {0}".format(test_y_axis.shape))
     print()
 
     #Graphs:
+    
+    matp.rcParams['figure.figsize'] = [18, 12]
+    matp.scatter(train_x_axis, train_y_axis)
+    #data.plot(kind = "scatter", x=train_x_axis, y=train_y_axis)
+    matp.ylabel('Score')
+    matp.xlabel('Ranked')
+    
+    matp.title('Anime Scored/Rank')
+    matp.show()
+    
 
 
+    linearModels = LinearRegression()
+    linearModels.fit(train_x_axis, train_y_axis)
+    prediction = linearModels.predict(test_x_axis)
+    print(f'Training: {round(linearModels.score(train_x_axis, train_y_axis)*100,2)}%')
+    print(f'Predict: {round(linearModels.score(test_x_axis, test_y_axis) * 100, 2)}%')
 linearFunc()
 
 # Function for making a correlation matrix;
@@ -77,7 +98,7 @@ def CreateCorrMatrix(data, getWidth):
 # Count of rows and columns
 def printInfo():
     amountOfRows = 2500
-    data = pd.read_csv('anime.csv', delimiter=',', nrows = amountOfRows)
+    data = pd.read_csv('animes.csv', delimiter=',', nrows = amountOfRows)
     getNumRowAndCols = data.shape
     data.dataframeName = 'animes.csv'
     print('Amount of rows and columns equal {0}'.format(getNumRowAndCols))
