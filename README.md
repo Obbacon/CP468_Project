@@ -14,5 +14,3 @@ Install RStudio, R, and the following libraries: dplyr, GGally, reshape2, ggplot
 Install Python, sklearn, numpy, matplotlib, pandas, seaborn, nltk and turtle
 
 # Performance parameters
-
-# License (If needed) 
