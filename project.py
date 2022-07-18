@@ -9,7 +9,7 @@ from nltk.corpus import stopwords
 #nltk.download('stopwords')
 import pandas as pd 
 import seaborn as sea
-import sklearn
+from sklearn import metrics
 
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import StandardScaler
@@ -19,6 +19,7 @@ import matplotlib.pyplot as matp
 import matplotlib as mpl
 import re
 import numpy as np  
+
 
 # Import not in use
 
@@ -68,14 +69,17 @@ def linearFunc():
     matp.title('Anime Scored/Rank')
     matp.show()
     
-
-
     linearModels = LinearRegression()
     linearModels.fit(train_x_axis, train_y_axis)
     prediction = linearModels.predict(test_x_axis)
-    print(f'Training: {round(linearModels.score(train_x_axis, train_y_axis)*100,2)}%')
+    print(f'Training: {round(linearModels.score(train_x_axis, train_y_axis) * 100,2)}%')
     print(f'Predict: {round(linearModels.score(test_x_axis, test_y_axis) * 100, 2)}%')
+    matp.scatter(test_y_axis, prediction)
+    #matp.hist(test_y_axis - prediction)
+    metrics.mean_absolute_error(test_y_axis, prediction)
+    matp.show()
 linearFunc()
+
 
 # Function for making a correlation matrix;
 def CreateCorrMatrix(data, getWidth):
@@ -96,13 +100,11 @@ def CreateCorrMatrix(data, getWidth):
     matp.show()
 
 # Count of rows and columns
-def printInfo():
-    amountOfRows = 2500
-    data = pd.read_csv('animes.csv', delimiter=',', nrows = amountOfRows)
-    getNumRowAndCols = data.shape
-    data.dataframeName = 'animes.csv'
-    print('Amount of rows and columns equal {0}'.format(getNumRowAndCols))
-#printInfo()
+amountOfRows = 2500
+data = pd.read_csv('animes.csv', delimiter=',', nrows = amountOfRows)
+getNumRowAndCols = data.shape
+data.dataframeName = 'animes.csv'
+print('Amount of rows and columns equal {0}'.format(getNumRowAndCols))
 
 
 #CreateCorrMatrix(data, 10) #Calls matrix function
