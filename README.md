@@ -10,6 +10,8 @@ Our objective is to find out how and why the scores from the dataset affects an 
 anime.csv
 
 # Installation and execution steps
+Install RStudio, R, and the following libraries: dplyr, GGally, reshape2, ggplot2, scales
+Install Python, sklearn, numpy, matplotlib, pandas, seaborn, nltk and turtle
 
 # Performance parameters
 
