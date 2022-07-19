@@ -1,4 +1,9 @@
-#Authors - Stephen Morris and Lily Dinh
+#Authors = Stephen Morris and Lily Dinh
+
+# Github ids = Obbacon and HueDinh13
+
+#Github link
+#https://github.com/Obbacon/CP468_Project.git
 
 #Imports
 import os
