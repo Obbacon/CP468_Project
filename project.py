@@ -8,13 +8,15 @@ import nltk
 from nltk.corpus import stopwords
 #nltk.download('stopwords')
 import pandas as pd 
-import seaborn as sea
+import seaborn as sns
 from sklearn import metrics
-
+from sklearn.tree import DecisionTreeRegressor
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.tree import plot_tree
 import matplotlib.pyplot as matp
 import matplotlib as mpl
 import re
@@ -22,7 +24,6 @@ import numpy as np
 
 
 # Import not in use
-#from sklearn.metrics import classification_report
 #import tensorflow as ten
 #import keras
 
@@ -53,7 +54,7 @@ def linearFunc():
     print(x_axis)
     print(y_axis)
 
-    train_x_axis, test_x_axis, train_y_axis, test_y_axis = train_test_split(x_axis, y_axis, train_size=.8, test_size=.2, random_state=100)
+    train_x_axis, test_x_axis, train_y_axis, test_y_axis = train_test_split(x_axis, y_axis, train_size=.10, test_size=.2, random_state=100)
     print(f'Train the data on x_axis {train_x_axis.shape}')
     print("Train the data on y_axis {0}".format(train_y_axis.shape))
     print("Testing the data on x_axis {0}".format(test_x_axis.shape))
@@ -79,11 +80,28 @@ def linearFunc():
     print(metrics.mean_absolute_error(test_y_axis, prediction))
     print(metrics.explained_variance_score(test_y_axis, prediction))
 
-    #print(classification_report(train_y_axis, prediction))
-    matp.scatter(test_y_axis, prediction)
-    #matp.hist(test_y_axis - prediction)
+    
+
     matp.show()
-linearFunc()
+
+#Logistic Regression model
+def logFunc():
+    amountOfRows = 17000
+    data = pd.read_csv('animes.csv', nrows=17000)
+    data.dropna(inplace=True)
+    df = pd.DataFrame(data)
+    df.drop(['uid', 'episodes', 'synopsis', 'aired', 'title', 'genre', 'img_url', 'link'], axis=1, inplace=True)
+
+    y_axis = df['ranked']
+    x_axis = df.drop('ranked', axis=1)
+
+    train_x_axis, test_x_axis, train_y_axis, test_y_axis = train_test_split(x_axis, y_axis, test_size=0.3)
+    
+    logisticReg = LogisticRegression()
+    logisticReg.fit(train_x_axis, train_y_axis)
+    prediction = logisticReg.predict(test_x_axis)
+    #print(classification_report(test_y_axis, prediction))
+    print(confusion_matrix(test_y_axis, prediction))
 
 
 # Function for making a correlation matrix;
@@ -106,6 +124,27 @@ def CreateCorrMatrix(data, getWidth):
     matp.colorbar(corrMat)
     matp.show()
 
+def decisionTree():
+    datas = pd.read_csv('animes.csv')
+    x_axis = "ranked"
+    y_axis = "popularity"
+    Training, Target = datas[[x_axis]], datas[y_axis]
+    Testing = pd.DataFrame(np.arange(Training[x_axis].min(),
+                                   Training[x_axis].max()),
+                                   columns=[x_axis])
+    
+    make_Tree = DecisionTreeRegressor(max_depth=1)
+    make_Tree.fit(Training, Target)
+    prediction = make_Tree.predict(Testing)
+    sns.scatterplot(data=datas, x=x_axis, y=y_axis, color="black", alpha=0.9)
+    matp.plot(Testing[x_axis], prediction, label="Decision tree")
+    matp.legend()
+    _ = matp.title("Decision Tree")
+    matp.show
+
+    _, axis = matp.subplots(figsize=(8, 6))
+    _ = plot_tree(make_Tree, feature_names=x_axis, ax=axis)
+
 # Count of rows and columns
 amountOfRows = 17000
 data = pd.read_csv('animes.csv', delimiter=',', nrows = amountOfRows)
@@ -115,5 +154,7 @@ getNumRowAndCols = data.shape
 df.dataframeName = 'animes.csv'
 print('Amount of rows and columns equal {0}'.format(getNumRowAndCols))
 
-
-CreateCorrMatrix(df, 8) #Calls matrix function
+decisionTree()
+#logFunc()
+linearFunc()
+#CreateCorrMatrix(df, 8) #Calls matrix function
